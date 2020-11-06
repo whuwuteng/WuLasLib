@@ -175,6 +175,8 @@ protected:
 	OPENFLAGS					m_flag;
 	FILE *						m_pfpFile;
 	void *						m_pLasMode;
+	// add for the write(only)
+	void * 						m_pHeader;
 	bool						m_bOpenMode;
 	// µãµÄ·¶Î§
 	double						m_xMax;
