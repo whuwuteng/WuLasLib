@@ -1,6 +1,6 @@
-# An adapter IO for Las File Read and Write
+# An adapter IO for Las File Reader and Writer
 
-An implement based on C++ and [lastool](https://github.com/LAStools/LAStools). 
+An implement based on C++ and [lastool](https://github.com/LAStools/LAStools) read and write [las file](https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities). 
 In this way, if lastool changes a lot, you do not need to change you kernl code.
 
 ## Running environment 
@@ -12,7 +12,7 @@ In this way, if lastool changes a lot, you do not need to change you kernl code.
 <LI> make
 </UL>
 
-## change version
+## version change log:
 ### v1.0 based on lastool(v2008)
 This version only imports read and write uncompress las file.
 
