@@ -132,6 +132,8 @@ public:
 	// 读文件的操作
 	// 获得点的个数
 	int							GetPtNum();
+	// 获得范围
+	void						GetRange(double & xmin, double & xmax, double & ymin, double & ymax, double & zmin, double & zmax);
 	// 获得偏移量
 	void						GetOffset(double & xOffset, double & yOffset, double & zOffset);
 	// 获得精度,即点最后的保存到小数点后几位
