@@ -7,8 +7,6 @@
 #include <string.h>
 #include <time.h>
 
-#include <iostream>
-
 #include "laswriter_las.hpp"
 #include "lasreader_las.hpp"
 
@@ -413,10 +411,6 @@ bool CWuLasLib::WriteLas( DPT3D * pLasPoint, int nPoint )
 		++m_nPoint;
 	}
 	
-	/*std::cout << "xmin xmax : " << m_xMin << "\t" << m_xMax << std::endl;
-	std::cout << "ymin ymax : " << m_yMin << "\t" << m_yMax << std::endl;
-	std::cout << "zmin zmax : " << m_zMin << "\t" << m_zMax << std::endl;*/
-	
 	return true;
 }
 
@@ -647,8 +641,8 @@ void CWuLasLib::UpdateRange()
 	}
 	m_xMax = m_xOffset + m_xMax * m_xScalefactor;
 	
-	local = (m_yMin - m_yOffset)/m_yScalefactor;
-	if (m_yMin < m_yOffset){
+	local = (m_yMin - m_xOffset)/m_yScalefactor;
+	if (m_yMin < m_xOffset){
 		m_yMin = (int)floor(local);
 	}
 	else{
@@ -656,8 +650,8 @@ void CWuLasLib::UpdateRange()
 	}
 	m_yMin = m_yOffset + m_yMin * m_yScalefactor;
 
-	local = (m_yMax - m_yOffset)/m_yScalefactor;
-	if (m_yMax < m_yOffset){
+	local = (m_yMax - m_xOffset)/m_yScalefactor;
+	if (m_yMax < m_xOffset){
 		m_yMax = (int)floor(local);
 	}
 	else{
@@ -665,8 +659,8 @@ void CWuLasLib::UpdateRange()
 	}
 	m_yMax = m_yOffset + m_yMax * m_yScalefactor;
 	
-	local = (m_zMin - m_zOffset)/m_zScalefactor;
-	if (m_zMin < m_zOffset){
+	local = (m_zMin - m_zOffset)/m_yScalefactor;
+	if (m_zMin < m_xOffset){
 		m_zMin = floor(local);
 	}
 	else{
@@ -674,36 +668,21 @@ void CWuLasLib::UpdateRange()
 	}
 	m_zMin = m_zOffset + m_zMin * m_zScalefactor;
 
-	local = (m_zMax - m_zOffset)/m_zScalefactor;
-	if (m_zMax < m_zOffset){
+	local = (m_zMax - m_zOffset)/m_yScalefactor;
+	if (m_zMax < m_xOffset){
 		m_zMax = floor(local);
 	}
 	else{
 		m_zMax = ceil(local);
 	}
 	m_zMax = m_zOffset + m_zMax * m_zScalefactor;
-	
-	/*std::cout << "xmin xmax : " << m_xMin << "\t" << m_xMax << std::endl;
-	std::cout << "ymin ymax : " << m_yMin << "\t" << m_yMax << std::endl;
-	std::cout << "zmin zmax : " << m_zMin << "\t" << m_zMax << std::endl;*/
 }
 
 int CWuLasLib::GetPtNum()
 {
-	LASheader * pHeader = &(((LASreaderLAS *)m_pLasMode)->header);
-	return pHeader->number_of_point_records;
-}
-
-void CWuLasLib::GetRange(double& xmin, double& xmax, double& ymin, double& ymax, double& zmin, double& zmax)
-{
-	xmin = m_xMin;
-	xmax = m_xMax;
-	
-	ymin = m_yMin;
-	ymax = m_yMax;
-	
-	zmin = m_zMin;
-	zmax = m_zMax;
+	//LASheader * pHeader = &(((LASreaderLAS *)m_pLasMode)->header);
+	//return pHeader->number_of_point_records + pHeader->extended_number_of_point_records;
+	return m_nPoint;
 }
 
 void CWuLasLib::GetOffset( double & xOffset, double & yOffset, double & zOffset )
@@ -732,16 +711,7 @@ void CWuLasLib::ReadLasHeader()
 	m_yOffset = pHeader->y_offset;
 	m_zOffset = pHeader->z_offset;
 
-	m_nPoint = pHeader->number_of_point_records;
-	
-	m_xMin = pHeader->min_x;
-	m_xMax = pHeader->max_x;
-	
-	m_yMin = pHeader->min_y;
-	m_yMax = pHeader->max_y;
-	
-	m_zMin = pHeader->min_z;
-	m_zMax = pHeader->max_z;
+	m_nPoint = pHeader->number_of_point_records + pHeader->extended_number_of_point_records;
 }
 
 void CWuLasLib::Local2GlobalCoord( int x, int y, int z, double & gx, double & gy, double & gz )
