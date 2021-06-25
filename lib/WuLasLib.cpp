@@ -413,9 +413,9 @@ bool CWuLasLib::WriteLas( DPT3D * pLasPoint, int nPoint )
 		++m_nPoint;
 	}
 	
-	std::cout << "xmin xmax : " << m_xMin << "\t" << m_xMax << std::endl;
-	std::cout << "ymin ymax : " << m_yMin << "\t" << m_yMax << std::endl;
-	std::cout << "zmin zmax : " << m_zMin << "\t" << m_zMax << std::endl;
+	//std::cout << "xmin xmax : " << m_xMin << "\t" << m_xMax << std::endl;
+	//std::cout << "ymin ymax : " << m_yMin << "\t" << m_yMax << std::endl;
+	//std::cout << "zmin zmax : " << m_zMin << "\t" << m_zMax << std::endl;
 	
 	return true;
 }
