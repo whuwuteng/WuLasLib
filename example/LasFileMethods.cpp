@@ -8,6 +8,22 @@
 
 int main(int argc, char const *argv[])
 {
+	if (argc != 7){
+		std::cout << "LasFileExample srcLasFile tarLasFile minx miny maxx maxy" <<std::endl;
+		return -1;
+	}
+	char szSrcLas[512] = { 0 };
+	strcpy(szSrcLas, argv[1]);
+
+	char szTarLas[512] = { 0 };
+	strcpy(szTarLas, argv[2]);
+
+	double minx = atof(argv[3]);
+	double miny = atof(argv[4]);
+	double maxx = atof(argv[5]);
+	double maxy = atof(argv[6]);
+
+/*	
 	char szSrcLas[512] = "../data/Vaihingen_Strip_10-sub.LAS";
 	char szTarLas[512] = "../data/Vaihingen_Strip_10-cut.LAS";
 	
@@ -15,7 +31,8 @@ int main(int argc, char const *argv[])
 	double miny = 5420320;
 	double maxx = 497040;
 	double maxy = 5420420;
-	
+*/	
+
 	CWuLasLib srcLas;
 	srcLas.Open(szSrcLas);
 	
