@@ -1,13 +1,15 @@
 # An adapter IO for Las File Reader and Writer
 
+## Introduction
+
 An implement based on C++ and [LAStools](https://github.com/LAStools/LAStools) read and write [las file](https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities). 
-In this way, if lastool changes a lot, you do not need to change you kernl code.
+In this way, if  [LAStools](https://github.com/LAStools/LAStools) changes a lot, you do not need to change you kernel code.
 
 ## Running environment 
 
 ### Dependency
 
-For the Las IO, there is no dependency, for the Las projection converter, it depends on [GDAL](https://gdal.org/).
+For the Las IO, there is **no dependency**, for the Las projection converter, it depends on [**GDAL**](https://gdal.org/).
 
 ### MakeLists for Ubuntu 16.04
 
@@ -22,16 +24,16 @@ make
 
 ## version change log:
 ### v1.0 based on lastool(v2008)
-This version only imports read and write uncompress las file.
+This version only imports read and write **uncompress** las file.
 
 ### v2.0 based on lastool(v2021)
-This version only imports read compress/uncompress las file and write uncompress las file.
+This version only imports read **compress/uncompress** las file and write uncompress las file.
 
-Read the "extended number of point records" for the LAS1.4 file.
+Read the "extended number of point records" for the **LAS1.4** file.
 
 ## Example
 
-There are two example, in the [example folder](/example):
+There are two example in the [example folder](/example):
 
 + **LasFileExample** is an example to crop the las file. After compiling the code, there is a test example in the  [data folder](/data):
 
