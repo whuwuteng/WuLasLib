@@ -4,6 +4,11 @@ An implement based on C++ and [LAStools](https://github.com/LAStools/LAStools) r
 In this way, if lastool changes a lot, you do not need to change you kernl code.
 
 ## Running environment 
+
+### Dependency
+
+For the Las IO, there is no dependency, for the Las projection converter, it depends on [GDAL](https://gdal.org/).
+
 ### MakeLists for Ubuntu 16.04
 
 ``` shell
@@ -36,25 +41,25 @@ There are two example, in the [example folder](/example):
 ./LasFileExample "../data/Vaihingen_Strip_10-sub.LAS" "../data/Vaihingen_Strip_10-cut.LAS" 497020 5420320 497040 5420420
 ```
 
-+ **LasFileConvert** is a tool to convert the Las file using GDAL, the projection file should be in [proj4 format](https://en.wikipedia.org/wiki/PROJ). In the  [data folder](/data), there are two files, i.e [3943_CC43.proj4](/data/3943_CC43.proj4) and [2154_Lambert93.proj4](/data/_Lambert93.proj4), these files can be down load from [EPSG](https://epsg.io/3943).
++ **LasFileConvert** is a tool to convert the Las file using [GDAL](https://gdal.org/), the projection file should be in [proj4 format](https://en.wikipedia.org/wiki/PROJ). In the  [data folder](/data), there are two files, i.e [3943_CC43.proj4](/data/3943_CC43.proj4) and [2154_Lambert93.proj4](/data/_Lambert93.proj4), these files can be downloaded from [EPSG](https://epsg.io/3943).
 
 | <img src="/figures/epsg.png" width="700" alt="epsg" /> |
 | :----------------------------------------------------------: |
 |           *Download proj4 file*           |
 
-There is a test example in the  [data folder](/data):
+There is a testing example in the  [data folder](/data):
 
 ```
 #! /bin/bash
 
-./LasFileConvert "../data/3943_CC43.las" "../data/3943_CC43.proj4" "../data/3943_CC43.las" "../data/2154_Lambert93.proj4" "../data/3943_CC43_convert.las" 
+./LasFileConvert "../data/3943_CC43.las" "../data/3943_CC43.proj4" "../data/2154_Lambert93.proj4" "../data/3943_CC43_convert.las" 
 ```
 
 After converting, the the result has the same coordinate reference with **2154_Lambert93.las**, then you can visualize them in [CloudCompare](https://www.danielgm.net/cc/):
 
-| <img src="/figures/convert.png" width="700" alt="convert" /> |
+| <img src="/figures/convert.png" width="800" alt="convert" /> |
 | :----------------------------------------------------------: |
-|           *Visulization in CloudCompare*           |
+|                *Visulization in CloudCompare*                |
 
 In the figure, the **red** points(**3943_CC43_convert.las**) are converted data, this data is from [AI4GEO project](https://www.ai4geo.eu/). And the **white** points(**2154_Lambert93.las**) are from [UMBRA data](https://hal.archives-ouvertes.fr/hal-02370225/document).
 
