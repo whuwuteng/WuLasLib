@@ -105,6 +105,8 @@ int main(int argc, char const *argv[])
 	
 	tarLas.Open(szTarLas, CWuLasLib::modeWrite);
 
+	// convert the xoffset and yoffset
+	int reprojected = pCoordTrans->Transform(1, &xOffset, &yOffset);
 	tarLas.SetOffset(xOffset, yOffset, zOffset);
 	tarLas.SetPrecision(xPrecision, yPrecision, zPrecision);
 	
