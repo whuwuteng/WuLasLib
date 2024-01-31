@@ -31,6 +31,19 @@ This version only imports read **compress/uncompress** las file and write uncomp
 
 Read the "extended number of point records" for the **LAS1.4** file.
 
+### v3.0 based on lastool(v2024)
+
+This version add the gps time in the structure, an other change is that use the submodule  [LAStools](https://github.com/LAStools/LAStools)  in the code, so that the code can be changed with the LAStools in the later.
+
+There are some files need to be removed in Linux :
+
+```
+./rmfile.sh
+```
+
+Some code need to be added in "laswriter_las.hpp" and "laswriter_las.cpp".
+
+
 ## Example
 
 There are two example in the [example folder](/example):
