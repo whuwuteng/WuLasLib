@@ -70,6 +70,21 @@ typedef struct tagLasPointEcho{
 			   \nWuLasLib.h, 警告:类型 LASPOINT_ECHO 已经定义过,请确保其定义为: struct tagLasPointEcho{ double x,y,z; unsigned short rgb[3]; unsigned short intensity; unsigned char classification; unsigned char echo; unsigned char sumechos;}")
 #endif
 
+#ifndef LASPOINT_TIME
+#define LASPOINT_TIME
+typedef struct tagLasPointTime{
+	double				x;						// x 坐标	
+	double				y;						// y 坐标
+	double				z;						// z 坐标
+	unsigned short		rgb[3];					// RGB颜色
+	unsigned char       echo;					// 第n次回波
+	double              gpstime;                // GPS time
+}LasPointTime;
+#else
+#pragma message("WuLasLib.h, Warning: LASPOINT_TIME alread define,be sure it was define as: struct tagLasPointEcho{ double x,y,z; unsigned short rgb[3]; unsigned char echo; double gpstime;}. \
+			   \nWuLasLib.h, 警告:类型 LASPOINT_TIME 已经定义过,请确保其定义为: struct tagLasPointEcho{ double x,y,z; unsigned short rgb[3]; unsigned char echo; double gpstime;}")
+#endif
+
 #ifndef _DPT3D
 #define _DPT3D
 typedef struct tagDPT3D
@@ -116,6 +131,8 @@ public:
 	bool						WriteLas(LasPointFull * pLasPoint, int nPoint);
 	// 写点云(从上次的地方开始写入)
 	bool						WriteLas(LasPointEcho * pLasPoint, int nPoint);
+	// 写点云(从上次的地方开始写入)
+	bool						WriteLas(LasPointTime * pLasPoint, int nPoint);
 	// 只写点云的坐标(从上次的地方开始写入)
 	bool						WriteLas(DPT3D * pLasPoint, int nPoint);
 	// 写点云(中间写入)
@@ -126,6 +143,8 @@ public:
 	bool						WriteLas(int nStartIndex, LasPointFull * pLasPoint, int nListSize);
 	// 写点云(中间写入)
 	bool						WriteLas(int nStartIndex, LasPointEcho * pLasPoint, int nListSize);
+	// 写点云(中间写入)
+	bool						WriteLas(int nStartIndex, LasPointTime * pLasPoint, int nListSize);
 	// 只写点云的坐标(中间写入)
 	bool						WriteLas(int nStartIndex, DPT3D * pLasPoint, int nListSize);
 
@@ -146,6 +165,8 @@ public:
 	bool						ReadLas(LasPointFull * pLasPoint, int nListSize);
 	// 读点云(从上次的地方开始读取)
 	bool						ReadLas(LasPointEcho * pLasPoint, int nListSize);
+	// 读点云(从上次的地方开始读取)
+	bool						ReadLas(LasPointTime * pLasPoint, int nListSize);
 	// 只读取点云的坐标(从上次的地方开始读取)
 	bool						ReadLas(DPT3D * pLasPoint, int nListSize);
 	// 读点云(中间读取)
@@ -156,6 +177,8 @@ public:
 	bool						ReadLas(int nStartIndex, LasPointFull * pLasPoint, int nListSize);
 	// 读点云(中间读取)
 	bool						ReadLas(int nStartIndex, LasPointEcho * pLasPoint, int nListSize);
+	// 读点云(中间读取)
+	bool						ReadLas(int nStartIndex, LasPointTime * pLasPoint, int nListSize);
 	// 只读取点云的坐标(中间读取)
 	bool						ReadLas(int nStartIndex, DPT3D * pLasPoint, int nListSize);
 /********************************************************************************************************/
@@ -193,7 +216,7 @@ protected:
 protected:
 	void						Reset();
 	// 写Las的头文件
-	bool						WriteLasHeader(bool bColor = true);
+	bool						WriteLasHeader(bool bColor = true, bool bGPS = false);
 	// 读Las的头文件
 	void						ReadLasHeader();
 	// 根据坐标和缩放系数进行变换(全局坐标系到局部坐标系)
