@@ -14,9 +14,12 @@ FIND_PACKAGE(GDAL REQUIRED)
 include_directories(${GDAL_INCLUDE_DIR})
 
 aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/lib libWuLasLib_src)
-aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/lib/lastool lastool_src)
+aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASlib/src lastool_src)
+aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASzip/src lastool_src)
 
-include_directories(${CMAKE_CURRENT_LIST_DIR}/lib/lastool)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASlib/inc)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASlib/src)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASzip/src)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/lib)
 
 add_library(WuLasLib SHARED ${lastool_src} ${libWuLasLib_src})
