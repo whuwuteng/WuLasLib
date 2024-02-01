@@ -23,7 +23,7 @@ make
 ```
 
 ## version change log:
-### v1.0 based on lastool(v2008)
+### v1.0 based on lastool(v2014)
 This version only imports read and write **uncompress** las file.
 
 ### v2.0 based on lastool(v2021)
