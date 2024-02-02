@@ -1,5 +1,4 @@
-project(MicmacTools)
-
+project(LasTools)
 
 SET(CMAKE_BUILD_TYPE "Release")
 
@@ -14,15 +13,15 @@ FIND_PACKAGE(GDAL REQUIRED)
 include_directories(${GDAL_INCLUDE_DIR})
 
 aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/lib libWuLasLib_src)
-aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASlib/src lastool_src)
-aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASzip/src lastool_src)
+aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASlib/src laslib_src)
+aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASzip/src laszip_src)
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASlib/inc)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASlib/src)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/LAStools/LASzip/src)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/lib)
 
-add_library(WuLasLib SHARED ${lastool_src} ${libWuLasLib_src})
+add_library(WuLasLib SHARED ${laslib_src} ${laszip_src} ${libWuLasLib_src})
 add_executable(LasFileExample ${CMAKE_CURRENT_LIST_DIR}/example/LasFileMethods.cpp)
 add_executable(LasFileConvert ${CMAKE_CURRENT_LIST_DIR}/example/LasConvert.cpp)
 
