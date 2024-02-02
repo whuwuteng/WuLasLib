@@ -78,11 +78,12 @@ typedef struct tagLasPointTime{
 	double				z;						// z 坐标
 	unsigned short		rgb[3];					// RGB颜色
 	unsigned char       echo;					// 第n次回波
+	unsigned char       sumechos;				// 总回波次数
 	double              gpstime;                // GPS time
 }LasPointTime;
 #else
-#pragma message("WuLasLib.h, Warning: LASPOINT_TIME alread define,be sure it was define as: struct tagLasPointEcho{ double x,y,z; unsigned short rgb[3]; unsigned char echo; double gpstime;}. \
-			   \nWuLasLib.h, 警告:类型 LASPOINT_TIME 已经定义过,请确保其定义为: struct tagLasPointEcho{ double x,y,z; unsigned short rgb[3]; unsigned char echo; double gpstime;}")
+#pragma message("WuLasLib.h, Warning: LASPOINT_TIME alread define,be sure it was define as: struct tagLasPointEcho{ double x,y,z; unsigned short rgb[3]; unsigned char echo; unsigned char sumechos; double gpstime;}. \
+			   \nWuLasLib.h, 警告:类型 LASPOINT_TIME 已经定义过,请确保其定义为: struct tagLasPointEcho{ double x,y,z; unsigned short rgb[3]; unsigned char echo; unsigned char sumechos; double gpstime;}")
 #endif
 
 #ifndef _DPT3D

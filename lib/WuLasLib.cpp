@@ -423,6 +423,7 @@ bool CWuLasLib::WriteLas(LasPointTime* pLasPoint, int nPoint)
 		if (m_zMax < pLasPoint->z)	m_zMax = pLasPoint->z;
 		Global2LocalCoord(pLasPoint->x, pLasPoint->y, pLasPoint->z, pt.X, pt.Y, pt.Z);
 		pt.return_number   = pLasPoint->echo;
+		pt.number_of_returns = pLasPoint->sumechos;
 		pt.have_gps_time = true;
 		pt.gps_time = pLasPoint->gpstime;
 		//pLasWriter->write_point(& pt, 0, pLasPoint->rgb);
@@ -927,6 +928,7 @@ bool CWuLasLib::ReadLas( LasPointTime * pLasPoint, int nListSize )
 		pLasReader->read_point();
 		Local2GlobalCoord(pLasReader->point.X, pLasReader->point.Y, pLasReader->point.Z, pLasPoint->x, pLasPoint->y, pLasPoint->z);
 		pLasPoint->echo            = pLasReader->point.return_number;
+		pLasPoint->sumechos		   = pLasReader->point.number_of_returns;
 		if (pLasReader->point.have_gps_time){
 			pLasPoint->gpstime = pLasReader->point.gps_time;
 		}
