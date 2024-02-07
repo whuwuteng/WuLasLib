@@ -189,6 +189,8 @@ protected:
 	char						m_szErrorMsg[512];
 	// 文件的路径
 	char						m_szLasPath[512];
+	// GPS Time Type
+	unsigned char				m_GPSType;
 	// 偏移量
 	double						m_xOffset;
 	double						m_yOffset;

@@ -815,6 +815,14 @@ void CWuLasLib::ReadLasHeader()
 {
 	LASheader * pHeader = &(((LASreader *)m_pLasMode)->header);
 
+	// GPS Time Type
+	m_GPSType = pHeader->global_encoding%2;
+
+	// debug
+	// The meaning of GPS Time in the point records. If this bit is not set, the GPS time in the point record fields is GPS Week Time (the same as versions 1.0 through 1.2 of LAS). Otherwise, if this bit is set, the GPS Time is standard GPS Time (satellite GPS Time) minus 1 x 109 (Adjusted Standard GPS Time). The offset moves the time back to near zero to improve floating point resolution. The origin of standard GPS Time is defined as midnight of the morning of January 6, 1980.
+
+	//printf("GPS Time Type = %d\n", int(m_GPSType));
+
 	m_xScalefactor = pHeader->x_scale_factor;
 	m_yScalefactor = pHeader->y_scale_factor;
 	m_zScalefactor = pHeader->z_scale_factor;
