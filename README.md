@@ -46,6 +46,33 @@ Some code need to be added in "laswriter_las.hpp" and "laswriter_las.cpp".
 
 ## Example
 
+The code is easy to use, here is an example for reader :
+
+```
+	// define the path
+	char szSrcLas[512] = "";
+	CWuLasLib srcLas;
+	srcLas.Open(szSrcLas);
+	
+	int nPoints = srcLas.GetPtNum();
+	
+	DPT3D * pLas = new DPT3D[nPoints];
+	memset(pLas, 0, sizeof(DPT3D) * nPoints);
+	
+	srcLas.ReadLas(pLas, nPoints);
+	
+	double xOffset = 0;
+	double yOffset = 0;
+	double zOffset = 0;
+	srcLas.GetOffset(xOffset, yOffset, zOffset);
+	
+	double xPrecision = 0;
+	double yPrecision = 0;
+	double zPrecision = 0;
+	srcLas.GetPrecision(xPrecision, yPrecision, zPrecision);
+	srcLas.Close();
+```
+
 There are two example in the [example folder](/example):
 
 + **LasFileExample** is an example to crop the las file. After compiling the code, there is a test example in the  [data folder](/data):
