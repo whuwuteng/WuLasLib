@@ -330,6 +330,7 @@ bool CWuLasLib::WriteLas( LasPointFull * pLasPoint, int nPoint )
 		for (int j = 0; j < 3; ++j){
 			pt.rgb[j] = pLasPoint->rgb[j];
 		}
+		pLasWriter->write_point(& pt);
 		++m_nPoint;
 	}
 	
