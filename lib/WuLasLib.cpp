@@ -12,191 +12,253 @@
 #include "laswriter_las.hpp"
 #include "lasreader_las.hpp"
 
-// lasTool is not read in one go, so it cannot be used.
+// lastool不是一次读取,所以没法用
 const int MEMORY_SIZE = 100 * 1024 * 1024;
 
 CWuLasLib::CWuLasLib()
 {
-    // Initialization
-    memset(m_szErrorMsg, 0, sizeof(char) * 512);
-    memset(m_szLasPath,  0, sizeof(char) * 512);
+	// 初始化
+	memset(m_szErrorMsg, 0, sizeof(char) * 512);
+	memset(m_szLasPath,  0, sizeof(char) * 512);
 
-    m_xOffset = 0;
-    m_yOffset = 0;
-    m_zOffset = 0;
+	m_xOffset = 0;
+	m_yOffset = 0;
+	m_zOffset = 0;
 
-    m_xScalefactor = 1.0;
-    m_yScalefactor = 1.0;
-    m_zScalefactor = 1.0;
+	m_xScalefactor = 1.0;
+	m_yScalefactor = 1.0;
+	m_zScalefactor = 1.0;
 
-    // File flags
-    m_pfpFile   = NULL;
-    m_pLasMode  = NULL;
-    m_bOpenMode = false;
+	// 文件标志
+	//m_pfpFile   = NULL;
+	m_pOpener = NULL;
+	m_pLasMode  = NULL;
+	m_bOpenMode = false;
 
-    // Initialize bounds
-    m_xMin = DBL_MAX;
-    m_xMax = DBL_MIN;
+	// 初始化范围
+	m_xMin = DBL_MAX;
+	m_xMax = DBL_MIN;
 
-    m_yMin = DBL_MAX;
-    m_yMax = DBL_MIN;
+	m_yMin = DBL_MAX;
+	m_yMax = DBL_MIN;
 
-    m_zMin = DBL_MAX;
-    m_zMax = DBL_MIN;
+	m_zMin = DBL_MAX;
+	m_zMax = DBL_MIN;
 
-    m_nPoint = 0;
+	m_nPoint = 0;
 }
 
 CWuLasLib::~CWuLasLib()
 {
-    Reset();
+	Reset();
 }
 
 void CWuLasLib::Reset()
 {
-    // Initialization
-    memset(m_szErrorMsg, 0, sizeof(char) * 512);
-    memset(m_szLasPath,  0, sizeof(char) * 512);
+	// 初始化
+	memset(m_szErrorMsg, 0, sizeof(char) * 512);
+	memset(m_szLasPath,  0, sizeof(char) * 512);
+	
+	m_xOffset = 0;
+	m_yOffset = 0;
+	m_zOffset = 0;
+	
+	m_xScalefactor = 1.0;
+	m_yScalefactor = 1.0;
+	m_zScalefactor = 1.0;
+	
+	if (m_bOpenMode){
+		Close();
+	}
+	else{
+		//m_pfpFile  = NULL;
+		m_pOpener = NULL;
+		m_pLasMode = NULL;
+	}
+	
+	// 初始化范围
+	m_xMin = DBL_MAX;
+	m_xMax = DBL_MIN;
+	
+	m_yMin = DBL_MAX;
+	m_yMax = DBL_MIN;
+	
+	m_zMin = DBL_MAX;
+	m_zMax = DBL_MIN;
 
-    m_xOffset = 0;
-    m_yOffset = 0;
-    m_zOffset = 0;
-
-    m_xScalefactor = 1.0;
-    m_yScalefactor = 1.0;
-    m_zScalefactor = 1.0;
-
-    if (m_bOpenMode) {
-        Close();
-    } else {
-        m_pfpFile  = NULL;
-        m_pLasMode = NULL;
-    }
-
-    // Initialize bounds
-    m_xMin = DBL_MAX;
-    m_xMax = DBL_MIN;
-
-    m_yMin = DBL_MAX;
-    m_yMax = DBL_MIN;
-
-    m_zMin = DBL_MAX;
-    m_zMax = DBL_MIN;
-
-    m_nPoint = 0;
+	m_nPoint = 0;
 }
 
 const char * CWuLasLib::GetLastError()
 {
-    return m_szErrorMsg;
+	return m_szErrorMsg;
 }
 
-bool CWuLasLib::Open(const char * pszLasFile, OPENFLAGS flag /*= modeRead*/)
+/*
+bool CWuLasLib::Open( const char * pszLasFile, OPENFLAGS flag)
 {
-    Reset();
+	Reset();
 
-    strcpy(m_szLasPath, pszLasFile);
-    m_flag = flag;
+	strcpy(m_szLasPath, pszLasFile);
+	m_flag = flag;
 
-    // File operations
-    if (m_flag == modeRead) {
-        m_pfpFile = fopen(pszLasFile, "rb");
-        if (m_pfpFile == NULL) {
-            sprintf(m_szErrorMsg, "%s cannot be opened!\n", pszLasFile);
-            return false;
-        }
+	// 文件操作
+	if (m_flag == modeRead){
+		m_pfpFile = fopen(pszLasFile, "rb");
+		if (m_pfpFile == NULL){
+			sprintf(m_szErrorMsg, "%s can not open!\n", pszLasFile);
+			return false;
+		}
 
-        m_pLasMode = new LASreaderLAS();
-        bool bOpenSuccess = ((LASreaderLAS *)m_pLasMode)->open(m_pfpFile);
+		m_pLasMode = new LASreaderLAS();
+		bool bOpenSuccess = ((LASreaderLAS * )m_pLasMode)->open(m_pfpFile);
+		
+		if (bOpenSuccess == false){
+			strcpy(m_szErrorMsg, "Can not read las file header!");
+			delete m_pLasMode;				m_pLasMode = NULL;
+			fclose(m_pfpFile);				m_pfpFile  = NULL;
+			return false;
+		}
 
-        if (!bOpenSuccess) {
-            strcpy(m_szErrorMsg, "Cannot read LAS file header!");
-            delete m_pLasMode;              m_pLasMode = NULL;
-            fclose(m_pfpFile);              m_pfpFile  = NULL;
-            return false;
-        }
+		ReadLasHeader();
+	}
+	else{
+		m_pfpFile = fopen(pszLasFile, "wb");
+		if (m_pfpFile == NULL){
+			sprintf(m_szErrorMsg, "%s can not open!\n", pszLasFile);
+			return false;
+		}
+		// check the extention of the file
 
-        ReadLasHeader();
-    } else {
-        m_pfpFile = fopen(pszLasFile, "wb");
-        if (m_pfpFile == NULL) {
-            sprintf(m_szErrorMsg, "%s cannot be opened!\n", pszLasFile);
-            return false;
-        }
-    }
-    m_bOpenMode = true;
+		const char * pszdot = strrchr(pszLasFile, '.') + 1;
+		if (strcmp(pszdot + 1, "laz") == 0 ||strcmp(pszdot + 1, "LAZ") == 0){
+			m_bCompress = true;
+		}
+		else{
+			m_bCompress = false;
+		}
+	}
+	m_bOpenMode = true;
 
-    return true;
+	return true;
+}
+*/
+
+bool CWuLasLib::Open( const char * pszLasFile, OPENFLAGS flag)
+{
+	Reset();
+
+	strcpy(m_szLasPath, pszLasFile);
+	m_flag = flag;
+
+	if (m_flag == modeRead){
+		m_pOpener = (LASreadOpener *)new LASreadOpener();
+		if (m_pOpener == NULL){
+			std::cout << "Can not create read pointer." << std::endl;
+			return false;
+		}
+		((LASreadOpener *)m_pOpener)->set_file_name(pszLasFile);
+		m_pLasMode = (LASreaderLAS * )(((LASreadOpener *)m_pOpener)->open());
+		if (m_pLasMode == NULL){
+			strcpy(m_szErrorMsg, "Can not read las file header!");
+			delete (LASreadOpener *)m_pOpener;				m_pOpener = NULL;
+			return false;
+		}
+		ReadLasHeader();
+	}
+	else{
+		m_pOpener = (LASwriteOpener *)new LASwriteOpener();
+		if (m_pOpener == NULL){
+			std::cout << "Can not create read pointer." << std::endl;
+			return false;
+		}
+		((LASwriteOpener *)m_pOpener)->set_file_name(pszLasFile);
+
+		const char * pszdot = strrchr(pszLasFile, '.') + 1;
+		if (strcmp(pszdot + 1, "laz") == 0 ||strcmp(pszdot + 1, "LAZ") == 0){
+			m_bCompress = true;
+		}
+		else{
+			m_bCompress = false;
+		}
+	}
+
+	m_bOpenMode = true;
+
+	return true;
 }
 
-void CWuLasLib::SetOffset(double xOffset, double yOffset, double zOffset)
+void CWuLasLib::SetOffset( double xOffset, double yOffset, double zOffset )
 {
-    m_xOffset = xOffset;
-    m_yOffset = yOffset;
-    m_zOffset = zOffset;
+	m_xOffset = xOffset;
+	m_yOffset = yOffset;
+	m_zOffset = zOffset;
 }
 
-void CWuLasLib::SetPrecision(double xPrecision, double yPrecision, double zPrecision)
+void CWuLasLib::SetPrecision( double xPrecision, double yPrecision, double zPrecision )
 {
-    m_xScalefactor = xPrecision;
-    m_yScalefactor = yPrecision;
-    m_zScalefactor = zPrecision;
+	m_xScalefactor = xPrecision;
+	m_yScalefactor = yPrecision;
+	m_zScalefactor = zPrecision;
 }
 
-// Header settings for write mode only
-bool CWuLasLib::WriteLasHeader(bool bColor /*= true*/, bool bGPS /*= false*/)
+// 只在写的情况设置头文件
+bool CWuLasLib::WriteLasHeader( bool bColor /*= true*/ )
 {
-    m_pHeader = new LASheader();
-    LASheader * pHeader = (LASheader *)m_pHeader;
+	m_pHeader = new LASheader();
+	LASheader * pHeader = (LASheader *)m_pHeader;
+	
+	pHeader->version_major = 1;
+	pHeader->version_minor = 2;
+	if (bColor){
+		pHeader->point_data_format = 2;
+		pHeader->point_data_record_length = 26;
+	}
+	else{
+		pHeader->point_data_format = 0;
+		pHeader->point_data_record_length = 20;
+	}
+	
+	strcpy(pHeader->system_identifier, "LasTool");
+	strcpy(pHeader->generating_software, "WuLasLib");
 
-    pHeader->version_major = 1;
-    pHeader->version_minor = 2;
+	time_t long_time;
+	time( &long_time );                
+	struct tm * pTime = localtime( &long_time ); 
 
-    if (bGPS) {
-        if (bColor) {
-            pHeader->point_data_format = 3;
-            pHeader->point_data_record_length = 34;
-        } else {
-            pHeader->point_data_format = 1;
-            pHeader->point_data_record_length = 28;
-        }
-    } else {
-        if (bColor) {
-            pHeader->point_data_format = 2;
-            pHeader->point_data_record_length = 26;
-        } else {
-            pHeader->point_data_format = 0;
-            pHeader->point_data_record_length = 20;
-        }
-    }
+	pHeader->file_creation_year = pTime->tm_year + 1900;
+	pHeader->file_creation_day  = pTime->tm_yday;
 
-    strcpy(pHeader->system_identifier, "LasTool");
-    strcpy(pHeader->generating_software, "WuLasLib");
+	pHeader->x_scale_factor = m_xScalefactor;
+	pHeader->y_scale_factor = m_yScalefactor;
+	pHeader->z_scale_factor = m_zScalefactor;
 
-    time_t long_time;
-    time(&long_time);                
-    struct tm * pTime = localtime(&long_time); 
+	pHeader->x_offset = m_xOffset;
+	pHeader->y_offset = m_yOffset;
+	pHeader->z_offset = m_zOffset;
+/*
+	m_pLasMode = new LASwriterLAS();
+	bool bOpenSuccess = false;
+	if (m_bCompress){
+		bOpenSuccess = ((LASwriterLAS * )m_pLasMode)->open(m_pfpFile, pHeader, LASZIP_COMPRESSOR_LAYERED_CHUNKED);
+	}
+	else{
+		bOpenSuccess = ((LASwriterLAS * )m_pLasMode)->open(m_pfpFile, pHeader, 0);
+	}
 
-    pHeader->file_creation_year = pTime->tm_year + 1900;
-    pHeader->file_creation_day  = pTime->tm_yday;
+	if (bOpenSuccess == false){
+		strcpy(m_szErrorMsg, "Can not write las file header!");
+		delete m_pLasMode;				m_pLasMode = NULL;
+	}
+*/
+	m_pLasMode = (LASwriter * )(((LASwriteOpener *)m_pOpener)->open(pHeader));
 
-    pHeader->x_scale_factor = m_xScalefactor;
-    pHeader->y_scale_factor = m_yScalefactor;
-    pHeader->z_scale_factor = m_zScalefactor;
-
-    pHeader->x_offset = m_xOffset;
-    pHeader->y_offset = m_yOffset;
-    pHeader->z_offset = m_zOffset;
-
-    m_pLasMode = new LASwriterLAS();
-    bool bOpenSuccess = ((LASwriterLAS *)m_pLasMode)->open(m_pfpFile, pHeader, 0);
-
-    if (!bOpenSuccess) {
-        strcpy(m_szErrorMsg, "Cannot write LAS file header!");
-        delete m_pLasMode;              m_pLasMode = NULL;
-    }
-
-    return bOpenSuccess;
+	if (m_pLasMode == NULL){
+		strcpy(m_szErrorMsg, "Can not read las file header!");
+		delete (LASreadOpener *)m_pOpener;				m_pOpener = NULL;
+		return false;
+	}
+	return true;
 }
 
 bool CWuLasLib::WriteLas( LasPoint * pLasPoint, int nPoint )
@@ -219,7 +281,7 @@ bool CWuLasLib::WriteLas( LasPoint * pLasPoint, int nPoint )
 
 	LASwriterLAS * pLasWriter = (LASwriterLAS *)m_pLasMode;
 
-	// Write point cloud file
+	// 写点云文件
 	int i;
 	
 	LASpoint pt;
@@ -264,7 +326,7 @@ bool CWuLasLib::WriteLas( LasPointClass * pLasPoint, int nPoint )
 	
 	LASwriterLAS * pLasWriter = (LASwriterLAS *)m_pLasMode;
 	
-	// Write point cloud file
+	// 写点云文件
 	int i;
 	LASpoint pt;
 	LASheader * pHeader = (LASheader *)m_pHeader;
@@ -310,7 +372,7 @@ bool CWuLasLib::WriteLas( LasPointFull * pLasPoint, int nPoint )
 	
 	LASwriterLAS * pLasWriter = (LASwriterLAS *)m_pLasMode;
 	
-	// Write point cloud file
+	// 写点云文件
 	int i;
 	LASpoint pt;
 	LASheader * pHeader = (LASheader *)m_pHeader;
@@ -330,7 +392,6 @@ bool CWuLasLib::WriteLas( LasPointFull * pLasPoint, int nPoint )
 		for (int j = 0; j < 3; ++j){
 			pt.rgb[j] = pLasPoint->rgb[j];
 		}
-		pLasWriter->write_point(& pt);
 		++m_nPoint;
 	}
 	
@@ -357,7 +418,7 @@ bool CWuLasLib::WriteLas( LasPointEcho * pLasPoint, int nPoint )
 
 	LASwriterLAS * pLasWriter = (LASwriterLAS *)m_pLasMode;
 
-	// Write point cloud file
+	// 写点云文件
 	int i;
 	LASpoint pt;
 	LASheader * pHeader = (LASheader *)m_pHeader;
@@ -378,109 +439,6 @@ bool CWuLasLib::WriteLas( LasPointEcho * pLasPoint, int nPoint )
 		for (int j = 0; j < 3; ++j){
 			pt.rgb[j] = pLasPoint->rgb[j];
 		}
-		pLasWriter->write_point(& pt);
-		++m_nPoint;
-	}
-
-	return true;
-}
-
-bool CWuLasLib::WriteLas(LasPointTime* pLasPoint, int nPoint)
-{
-	if (! m_bOpenMode){
-		strcpy(m_szErrorMsg, "File open fail!\n");
-		return false;
-	}
-
-	if (m_flag == modeRead){
-		strcpy(m_szErrorMsg, "File is only read!\n");
-		return false;
-	}
-
-	if (m_pLasMode == NULL){
-		if (! WriteLasHeader(true, true) ){
-			return false;
-		}
-	}
-
-	LASwriterLAS * pLasWriter = (LASwriterLAS *)m_pLasMode;
-
-	// Write point cloud file
-	int i;
-	LASpoint pt;
-	LASheader * pHeader = (LASheader *)m_pHeader;
-	pt.init(pHeader, pHeader->point_data_format, pHeader->point_data_record_length, 0);
-	for (i = 0; i < nPoint; ++i, ++pLasPoint){
-		if (m_xMin > pLasPoint->x)	m_xMin = pLasPoint->x;
-		if (m_xMax < pLasPoint->x)	m_xMax = pLasPoint->x;
-		if (m_yMin > pLasPoint->y)	m_yMin = pLasPoint->y;
-		if (m_yMax < pLasPoint->y)	m_yMax = pLasPoint->y;
-		if (m_zMin > pLasPoint->z)	m_zMin = pLasPoint->z;
-		if (m_zMax < pLasPoint->z)	m_zMax = pLasPoint->z;
-		Global2LocalCoord(pLasPoint->x, pLasPoint->y, pLasPoint->z, pt.X, pt.Y, pt.Z);
-		pt.intensity       = pLasPoint->intensity;
-		pt.return_number   = pLasPoint->echo;
-		pt.number_of_returns = pLasPoint->sumechos;
-		pt.have_gps_time = true;
-		pt.gps_time = pLasPoint->gpstime;
-		//pLasWriter->write_point(& pt, 0, pLasPoint->rgb);
-		for (int j = 0; j < 3; ++j){
-			pt.rgb[j] = pLasPoint->rgb[j];
-		}
-		pt.scan_direction_flag = pLasPoint->scanflag;
-		pt.edge_of_flight_line = pLasPoint->scanline;
-		pLasWriter->write_point(& pt);
-		++m_nPoint;
-	}
-
-	return true;
-}
-
-bool CWuLasLib::WriteLas(LasPointUltra * pLasPoint, int nPoint)
-{
-	if (! m_bOpenMode){
-		strcpy(m_szErrorMsg, "File open fail!\n");
-		return false;
-	}
-
-	if (m_flag == modeRead){
-		strcpy(m_szErrorMsg, "File is only read!\n");
-		return false;
-	}
-
-	if (m_pLasMode == NULL){
-		if (! WriteLasHeader(true, true) ){
-			return false;
-		}
-	}
-
-	LASwriterLAS * pLasWriter = (LASwriterLAS *)m_pLasMode;
-
-	// Write point cloud file
-	int i;
-	LASpoint pt;
-	LASheader * pHeader = (LASheader *)m_pHeader;
-	pt.init(pHeader, pHeader->point_data_format, pHeader->point_data_record_length, 0);
-	for (i = 0; i < nPoint; ++i, ++pLasPoint){
-		if (m_xMin > pLasPoint->x)	m_xMin = pLasPoint->x;
-		if (m_xMax < pLasPoint->x)	m_xMax = pLasPoint->x;
-		if (m_yMin > pLasPoint->y)	m_yMin = pLasPoint->y;
-		if (m_yMax < pLasPoint->y)	m_yMax = pLasPoint->y;
-		if (m_zMin > pLasPoint->z)	m_zMin = pLasPoint->z;
-		if (m_zMax < pLasPoint->z)	m_zMax = pLasPoint->z;
-		Global2LocalCoord(pLasPoint->x, pLasPoint->y, pLasPoint->z, pt.X, pt.Y, pt.Z);
-		pt.intensity       = pLasPoint->intensity;
-		pt.classification  = pLasPoint->classification;
-		pt.return_number   = pLasPoint->echo;
-		pt.number_of_returns = pLasPoint->sumechos;
-		pt.have_gps_time = true;
-		pt.gps_time = pLasPoint->gpstime;
-		//pLasWriter->write_point(& pt, 0, pLasPoint->rgb);
-		for (int j = 0; j < 3; ++j){
-			pt.rgb[j] = pLasPoint->rgb[j];
-		}
-		pt.scan_direction_flag = pLasPoint->scanflag;
-		pt.edge_of_flight_line = pLasPoint->scanline;
 		pLasWriter->write_point(& pt);
 		++m_nPoint;
 	}
@@ -508,7 +466,7 @@ bool CWuLasLib::WriteLas( DPT3D * pLasPoint, int nPoint )
 	
 	LASwriterLAS * pLasWriter = (LASwriterLAS *)m_pLasMode;
 	
-	// Write point cloud file
+	// 写点云文件
 	int i;
 	LASpoint pt;
 	LASheader * pHeader = (LASheader *)m_pHeader;
@@ -640,60 +598,6 @@ bool CWuLasLib::WriteLas( int nStartIndex, LasPointEcho * pLasPoint, int nListSi
 	return true;
 }
 
-bool CWuLasLib::WriteLas( int nStartIndex, LasPointTime * pLasPoint, int nListSize )
-{
-	if (! m_bOpenMode){
-		strcpy(m_szErrorMsg, "File open fail!\n");
-		return false;
-	}
-
-	if (m_flag == modeRead){
-		strcpy(m_szErrorMsg, "File is only read!\n");
-		return false;
-	}
-
-	if (m_pLasMode == NULL){
-		if (! WriteLasHeader(true, true) ){
-			return false;
-		}
-	}
-
-	LASwriterLAS * pLasWriter = (LASwriterLAS *)m_pLasMode;
-
-	pLasWriter->Offset(nStartIndex);
-
-	WriteLas(pLasPoint, nListSize);
-
-	return true;
-}
-
-bool CWuLasLib::WriteLas( int nStartIndex, LasPointUltra * pLasPoint, int nListSize )
-{
-	if (! m_bOpenMode){
-		strcpy(m_szErrorMsg, "File open fail!\n");
-		return false;
-	}
-
-	if (m_flag == modeRead){
-		strcpy(m_szErrorMsg, "File is only read!\n");
-		return false;
-	}
-
-	if (m_pLasMode == NULL){
-		if (! WriteLasHeader(true, true) ){
-			return false;
-		}
-	}
-
-	LASwriterLAS * pLasWriter = (LASwriterLAS *)m_pLasMode;
-
-	pLasWriter->Offset(nStartIndex);
-
-	WriteLas(pLasPoint, nListSize);
-
-	return true;
-}
-
 bool CWuLasLib::WriteLas( int nStartIndex, DPT3D * pLasPoint, int nListSize )
 {
 	if (! m_bOpenMode){
@@ -750,6 +654,12 @@ void CWuLasLib::Global2LocalCoord( double gx, double gy, double gz, int & x, int
 	}
 }
 
+void CWuLasLib::UpdateHeader()
+{
+
+}
+
+/*
 void CWuLasLib::Close()
 {
 	if (m_bOpenMode){
@@ -759,15 +669,35 @@ void CWuLasLib::Close()
 				return;
 			}
 			else{
+				UpdateRange();
+				// useless
+				// update the header
+				((LASheader *)m_pHeader)->max_x = m_xMax;
+				((LASheader *)m_pHeader)->min_x = m_xMin;
+				((LASheader *)m_pHeader)->max_y = m_yMax;
+				((LASheader *)m_pHeader)->min_y = m_yMin;
+				((LASheader *)m_pHeader)->max_z = m_zMax;
+				((LASheader *)m_pHeader)->min_z = m_zMin;
+
+				if (m_nPoint < __INT32_MAX__){
+					((LASheader *)m_pHeader)->number_of_point_records = m_nPoint;
+				}
+				else{
+					((LASheader *)m_pHeader)->number_of_point_records = 0;
+					((LASheader *)m_pHeader)->extended_number_of_point_records = m_nPoint;
+				}
+
 				((LASwriterLAS *)m_pLasMode)->close();
 				fclose(m_pfpFile);
 			}
 
-			UpdateRange();
-
 			m_pfpFile = fopen(m_szLasPath, "rb+");
-			fseek(m_pfpFile, 107, SEEK_SET);
-			fwrite(& m_nPoint, sizeof(unsigned int), 5, m_pfpFile);
+
+			// only rewrite the header can handle the point number is larger than INT32
+			// lastool will check the number itself
+			//fseek(m_pfpFile, 107, SEEK_SET);
+			//fwrite(& m_nPoint, sizeof(unsigned int), 5, m_pfpFile);
+
 			fseek(m_pfpFile, 179, SEEK_SET);
 			fwrite(& m_xMax, sizeof(double), 1, m_pfpFile);
 			fwrite(& m_xMin, sizeof(double), 1, m_pfpFile);
@@ -776,6 +706,7 @@ void CWuLasLib::Close()
 			fwrite(& m_zMax, sizeof(double), 1, m_pfpFile);
 			fwrite(& m_zMin, sizeof(double), 1, m_pfpFile);
 			fclose(m_pfpFile);
+
 			m_bOpenMode = false;
 
 			delete (LASwriterLAS *)m_pLasMode;		m_pLasMode = NULL;
@@ -790,7 +721,28 @@ void CWuLasLib::Close()
 		}
 	}
 }
+*/
 
+void CWuLasLib::Close()
+{
+	if (m_bOpenMode){
+		if (m_flag == modeWrite){
+			if (m_pOpener != NULL){
+				((LASwriterLAS *)m_pLasMode)->close();
+				//delete (LASwriterLAS *)m_pLasMode;		m_pLasMode = NULL;
+				delete (LASwriteOpener *)m_pOpener; 	m_pOpener = NULL;
+			}
+		}
+		else{
+			if (m_pOpener != NULL){
+				((LASreaderLAS *)m_pLasMode)->close();
+				m_bOpenMode = false;
+				//delete (LASreaderLAS *)m_pLasMode;		m_pLasMode = NULL;
+				delete (LASreadOpener *)m_pOpener; 		m_pOpener = NULL;
+			}
+		}
+	}
+}
 void CWuLasLib::UpdateRange()
 {
 	double local;
@@ -854,7 +806,7 @@ void CWuLasLib::UpdateRange()
 	std::cout << "zmin zmax : " << m_zMin << "\t" << m_zMax << std::endl;*/
 }
 
-int CWuLasLib::GetPtNum()
+int64_t CWuLasLib::GetPtNum()
 {
 	/*LASheader * pHeader = &(((LASreaderLAS *)m_pLasMode)->header);
 	return pHeader->number_of_point_records + pHeader->extended_number_of_point_records;*/
@@ -890,14 +842,6 @@ void CWuLasLib::GetPrecision( double & xPrecision, double & yPrecision, double &
 void CWuLasLib::ReadLasHeader()
 {
 	LASheader * pHeader = &(((LASreader *)m_pLasMode)->header);
-
-	// GPS Time Type
-	m_GPSType = pHeader->global_encoding%2;
-
-	// debug
-	// The meaning of GPS Time in the point records. If this bit is not set, the GPS time in the point record fields is GPS Week Time (the same as versions 1.0 through 1.2 of LAS). Otherwise, if this bit is set, the GPS Time is standard GPS Time (satellite GPS Time) minus 1 x 109 (Adjusted Standard GPS Time). The offset moves the time back to near zero to improve floating point resolution. The origin of standard GPS Time is defined as midnight of the morning of January 6, 1980.
-
-	//printf("GPS Time Type = %d\n", int(m_GPSType));
 
 	m_xScalefactor = pHeader->x_scale_factor;
 	m_yScalefactor = pHeader->y_scale_factor;
@@ -1003,63 +947,10 @@ bool CWuLasLib::ReadLas( LasPointEcho * pLasPoint, int nListSize )
 	return true;
 }
 
-bool CWuLasLib::ReadLas( LasPointTime * pLasPoint, int nListSize )
+bool CWuLasLib::ReadLas( DPT3D * pLasPoint, int64_t nListSize )
 {
-	int i;
-
 	LASreaderLAS * pLasReader = (LASreaderLAS *)m_pLasMode;
-	for (i = 0; i < nListSize; ++i, ++pLasPoint){
-		pLasReader->read_point();
-		Local2GlobalCoord(pLasReader->point.X, pLasReader->point.Y, pLasReader->point.Z, pLasPoint->x, pLasPoint->y, pLasPoint->z);
-		pLasPoint->intensity       = pLasReader->point.intensity;
-		pLasPoint->echo            = pLasReader->point.return_number;
-		pLasPoint->sumechos		   = pLasReader->point.number_of_returns;
-		if (pLasReader->point.have_gps_time){
-			pLasPoint->gpstime = pLasReader->point.gps_time;
-		}
-		pLasPoint->scanflag = pLasReader->point.scan_direction_flag;
-        pLasPoint->scanline = pLasReader->point.edge_of_flight_line;
-		//memcpy(pLasPoint->rgb, pLasReader->rgb, sizeof(short) * 3);
-		for (int j = 0; j < 3; ++j){
-			pLasPoint->rgb[j] = pLasReader->point.rgb[j];
-		}
-	}
-
-	return true;
-}
-
-bool CWuLasLib::ReadLas( LasPointUltra * pLasPoint, int nListSize )
-{
-	int i;
-
-	LASreaderLAS * pLasReader = (LASreaderLAS *)m_pLasMode;
-	for (i = 0; i < nListSize; ++i, ++pLasPoint){
-		pLasReader->read_point();
-		Local2GlobalCoord(pLasReader->point.X, pLasReader->point.Y, pLasReader->point.Z, pLasPoint->x, pLasPoint->y, pLasPoint->z);
-		pLasPoint->intensity       = pLasReader->point.intensity;
-		pLasPoint->classification  = pLasReader->point.classification;
-		pLasPoint->echo            = pLasReader->point.return_number;
-		pLasPoint->sumechos		   = pLasReader->point.number_of_returns;
-		if (pLasReader->point.have_gps_time){
-			pLasPoint->gpstime = pLasReader->point.gps_time;
-		}
-		pLasPoint->scanflag = pLasReader->point.scan_direction_flag;
-        pLasPoint->scanline = pLasReader->point.edge_of_flight_line;
-		//memcpy(pLasPoint->rgb, pLasReader->rgb, sizeof(short) * 3);
-		for (int j = 0; j < 3; ++j){
-			pLasPoint->rgb[j] = pLasReader->point.rgb[j];
-		}
-	}
-
-	return true;
-}
-
-bool CWuLasLib::ReadLas( DPT3D * pLasPoint, int nListSize )
-{
-	int i;
-	
-	LASreaderLAS * pLasReader = (LASreaderLAS *)m_pLasMode;
-	for (i = 0; i < nListSize; ++i, ++pLasPoint){
+	for (int64_t i = 0; i < nListSize; ++i, ++pLasPoint){
 		pLasReader->read_point();
 		Local2GlobalCoord(pLasReader->point.X, pLasReader->point.Y, pLasReader->point.Z, pLasPoint->x, pLasPoint->y, pLasPoint->z);
 	}
@@ -1112,28 +1003,6 @@ bool CWuLasLib::ReadLas( int nStartIndex, DPT3D * pLasPoint, int nListSize )
 }
 
 bool CWuLasLib::ReadLas( int nStartIndex, LasPointEcho * pLasPoint, int nListSize )
-{
-	LASreaderLAS * pLasReader = (LASreaderLAS *)m_pLasMode;
-
-	pLasReader->seek(nStartIndex);
-
-	ReadLas(pLasPoint, nListSize);
-
-	return true;
-}
-
-bool CWuLasLib::ReadLas( int nStartIndex, LasPointTime * pLasPoint, int nListSize )
-{
-	LASreaderLAS * pLasReader = (LASreaderLAS *)m_pLasMode;
-
-	pLasReader->seek(nStartIndex);
-
-	ReadLas(pLasPoint, nListSize);
-
-	return true;
-}
-
-bool CWuLasLib::ReadLas( int nStartIndex, LasPointUltra * pLasPoint, int nListSize )
 {
 	LASreaderLAS * pLasReader = (LASreaderLAS *)m_pLasMode;
 

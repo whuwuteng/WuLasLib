@@ -9,273 +9,204 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Definition of LasPoint structure
 #ifndef LASPOINT_ITEM
 #define LASPOINT_ITEM
 typedef struct tagLasPoint{
-	double				x;						// x coordinate
-	double				y;						// y coordinate
-	double				z;						// z coordinate
-	unsigned short		rgb[3];					// RGB color
+	double				x;						// x 坐标	
+	double				y;						// y 坐标
+	double				z;						// z 坐标
+	unsigned short		rgb[3];					// RGB颜色
 }LasPoint;
 #else
-#pragma message("WuLasLib.h, Warning: LASPOINT_ITEM already defined. Ensure it matches: struct tagLasPoint{ double x,y,z; unsigned short rgb[3]; }.")
+#pragma message("WuLasLib.h, Warning: LASPOINT_ITEM alread define,be sure it was define as: struct tagLasPoint{ double x,y,z; unsigned short rgb[3]; }. \
+               \nWuLasLib.h, 警告:类型 LASPOINT_ITEM 已经定义过,请确保其定义为: struct tagLasPoint{ double x,y,z; unsigned short rgb[3];}")
 #endif
 
-// Definition of LasPointClass structure
 #ifndef LASPOINT_CLASS
 #define LASPOINT_CLASS
 typedef struct tagLasPointClass{
-	double				x;						// x coordinate
-	double				y;						// y coordinate
-	double				z;						// z coordinate
-	unsigned short		rgb[3];					// RGB color
-	unsigned short		intensity;				// Intensity information
-	unsigned char		classification;			// Classification information
+	double				x;						// x 坐标	
+	double				y;						// y 坐标
+	double				z;						// z 坐标
+	unsigned short		rgb[3];					// RGB颜色
+	unsigned short		intensity;				// 强度信息
+	unsigned char		classification;			// 类别信息
 }LasPointClass;
 #else
-#pragma message("WuLasLib.h, Warning: LASPOINT_CLASS already defined. Ensure it matches: struct tagLasPointClass{ double x,y,z; unsigned short rgb[3]; unsigned short intensity; unsigned char classification; }.")
+#pragma message("WuLasLib.h, Warning: LASPOINT_CLASS alread define,be sure it was define as: struct tagLasPointClass{ double x,y,z; unsigned short rgb[3]; unsigned short intensity; unsigned char classification;}. \
+			   \nWuLasLib.h, 警告:类型 LASPOINT_CLASS 已经定义过,请确保其定义为: struct tagLasPointClass{ double x,y,z; unsigned short rgb[3]; unsigned short intensity; unsigned char classification;}")
 #endif
 
-// Definition of LasPointFull structure
 #ifndef LASPOINT_FULL
 #define LASPOINT_FULL
 typedef struct tagLasPointFull{
-	double				x;						// x coordinate
-	double				y;						// y coordinate
-	double				z;						// z coordinate
-	unsigned short		rgb[3];					// RGB color
-	unsigned short		intensity;				// Intensity information
-	unsigned char		classification;			// Classification information
-	unsigned short		point_source_ID;		// Point ID value
+	double				x;						// x 坐标	
+	double				y;						// y 坐标
+	double				z;						// z 坐标
+	unsigned short		rgb[3];					// RGB颜色
+	unsigned short		intensity;				// 强度信息
+	unsigned char		classification;			// 类别信息
+	unsigned short		point_source_ID;		// 点的ID值
 }LasPointFull;
 #else
-#pragma message("WuLasLib.h, Warning: LASPOINT_FULL already defined. Ensure it matches: struct tagLasPointFull{ double x,y,z; unsigned short rgb[3]; unsigned short intensity; unsigned char classification; unsigned short point_source_ID; }.")
+#pragma message("WuLasLib.h, Warning: LASPOINT_FULL alread define,be sure it was define as: struct tagLasPointClass{ double x,y,z; unsigned short rgb[3]; unsigned short intensity; unsigned char classification; unsigned short point_source_ID;}. \
+				\nWuLasLib.h, 警告:类型 LASPOINT_FULL 已经定义过,请确保其定义为: struct tagLasPointClass{ double x,y,z; unsigned short rgb[3]; unsigned short intensity; unsigned char classification; unsigned short point_source_ID;}")
 #endif
 
-// Definition of LasPointEcho structure
 #ifndef LASPOINT_ECHO
 #define LASPOINT_ECHO
 typedef struct tagLasPointEcho{
-	double				x;						// x coordinate
-	double				y;						// y coordinate
-	double				z;						// z coordinate
-	unsigned short		rgb[3];					// RGB color
-	unsigned short		intensity;				// Intensity information
-	unsigned char		classification;			// Classification information
-	unsigned char       echo;					// nth echo
-	unsigned char       sumechos;				// Total number of echoes
+	double				x;						// x 坐标	
+	double				y;						// y 坐标
+	double				z;						// z 坐标
+	unsigned short		rgb[3];					// RGB颜色
+	unsigned short		intensity;				// 强度信息
+	unsigned char		classification;			// 类别信息
+	unsigned char       echo;					// 第n次回波
+	unsigned char       sumechos;				// 总回波次数
 }LasPointEcho;
 #else
-#pragma message("WuLasLib.h, Warning: LASPOINT_ECHO already defined. Ensure it matches: struct tagLasPointEcho{ double x,y,z; unsigned short rgb[3]; unsigned short intensity; unsigned char classification; unsigned char echo; unsigned char sumechos; }.")
+#pragma message("WuLasLib.h, Warning: LASPOINT_ECHO alread define,be sure it was define as: struct tagLasPointEcho{ double x,y,z; unsigned short rgb[3]; unsigned short intensity; unsigned char classification; unsigned char echo; unsigned char sumechos;}. \
+			   \nWuLasLib.h, 警告:类型 LASPOINT_ECHO 已经定义过,请确保其定义为: struct tagLasPointEcho{ double x,y,z; unsigned short rgb[3]; unsigned short intensity; unsigned char classification; unsigned char echo; unsigned char sumechos;}")
 #endif
 
-// Definition of LasPointTime structure
-#ifndef LASPOINT_TIME
-#define LASPOINT_TIME
-typedef struct tagLasPointTime{
-	double				x;						// x coordinate
-	double				y;						// y coordinate
-	double				z;						// z coordinate
-	unsigned short		rgb[3];					// RGB color
-	unsigned short		intensity;				// Intensity information
-	unsigned char       echo;					// nth echo
-	unsigned char       sumechos;				// Total number of echoes
-	double              gpstime;                // GPS time
-	unsigned char		scanflag;				// Scan direction flag
-	unsigned char		scanline;				// Edge of flight line
-}LasPointTime;
-#else
-#pragma message("WuLasLib.h, Warning: LASPOINT_TIME already defined. Ensure it matches: struct tagLasPointTime{ double x,y,z; unsigned short rgb[3]; unsigned char echo; unsigned char sumechos; double gpstime; }.")
-#endif
-
-// Definition of LasPointUltra structure
-#ifndef LASPOINT_ULTRA
-#define LASPOINT_ULTRA
-typedef struct tagLasPointUltra{
-	double				x;						// x coordinate
-	double				y;						// y coordinate
-	double				z;						// z coordinate
-	unsigned short		rgb[3];					// RGB color
-	unsigned short		intensity;				// Intensity information
-	unsigned char		classification;			// Classification information
-	unsigned char       echo;					// nth echo
-	unsigned char       sumechos;				// Total number of echoes
-	double              gpstime;                // GPS time
-	unsigned char		scanflag;				// Scan direction flag
-	unsigned char		scanline;				// Edge of flight line
-}LasPointUltra;
-#else
-#pragma message("WuLasLib.h, Warning: LASPOINT_ULTRA already defined. Ensure it matches: struct tagLasPointUltra{ double x,y,z; unsigned short rgb[3]; unsigned char echo; unsigned char sumechos; double gpstime; }.")
-#endif
-
-// Definition of DPT3D structure
 #ifndef _DPT3D
 #define _DPT3D
 typedef struct tagDPT3D
 {
-	double				x;						// x coordinate
-	double				y;						// y coordinate
-	double				z;						// z coordinate
+	double				x;						// x 坐标	
+	double				y;						// y 坐标
+	double				z;						// z 坐标
 }DPT3D;
 #else
-#pragma message("WuLasLib.h, Warning: DPT3D already defined. Ensure it matches: struct tagDPT3D{ double x,y,z; }.")
+#pragma  message("WuLasLib.h, Warning: DPT3D alread define,be sure it was define as: struct tagDPT3D{ double x,y,z; }. \
+				\nWuLasLib.h, 警告:类型 DPT3D 已经定义过,请确保其定义为: struct tagDPT3D{ double x,y,z; }") 
 #endif
 
-// Implementation of the CWuLasLib class
+// 先实现写的功能
 class CWuLasLib
 {
 public:
-    CWuLasLib();
-    virtual ~CWuLasLib();
+	CWuLasLib();
+	virtual ~CWuLasLib();
 
-    //! File access modes
-    enum OPENFLAGS { 
-        modeRead = 1,  // Open in read-only mode
-        modeWrite      // Open in write mode
-    };
+	//! 文件访问模式
+	enum OPENFLAGS{ modeRead = 1,						// 以只读的方式打开				
+					modeWrite							// 以可写的方式打开
+	};
 
 public:
-    // Open operation
-    // TODO: Add LAZ support
-    bool Open(const char* pszLasFile, OPENFLAGS flag = modeRead);
+	// 打开操作
+	bool						Open(const char * pszLasFile, OPENFLAGS flag = modeRead);
+	// 关闭操作
+	void						Close();
+	// 获得错误信息
+	const char *				GetLastError();
+/********************************************************************************************************/
+	// 写文件的操作,写文件只能用同一种模式
+	// 设置偏移量
+	void						SetOffset(double xOffset, double yOffset, double zOffset);
+	// 设置精度,即点最后的保存到小数点后几位
+	void						SetPrecision(double xPrecision, double yPrecision, double zPrecision);
+	// 写点云(从上次的地方开始写入)
+	bool						WriteLas(LasPoint * pLasPoint, int nPoint);
+	// 写点云(从上次的地方开始写入)
+	bool						WriteLas(LasPointClass * pLasPoint, int nPoint);
+	// 写点云(从上次的地方开始写入)
+	bool						WriteLas(LasPointFull * pLasPoint, int nPoint);
+	// 写点云(从上次的地方开始写入)
+	bool						WriteLas(LasPointEcho * pLasPoint, int nPoint);
+	// 只写点云的坐标(从上次的地方开始写入)
+	bool						WriteLas(DPT3D * pLasPoint, int nPoint);
+	// 写点云(中间写入)
+	bool						WriteLas(int nStartIndex, LasPoint * pLasPoint, int nListSize);
+	// 写点云(中间写入)
+	bool						WriteLas(int nStartIndex, LasPointClass * pLasPoint, int nListSize);
+	// 写点云(中间写入)
+	bool						WriteLas(int nStartIndex, LasPointFull * pLasPoint, int nListSize);
+	// 写点云(中间写入)
+	bool						WriteLas(int nStartIndex, LasPointEcho * pLasPoint, int nListSize);
+	// 只写点云的坐标(中间写入)
+	bool						WriteLas(int nStartIndex, DPT3D * pLasPoint, int nListSize);
 
-    // Close operation
-    void Close();
-
-    // Get error message
-    const char* GetLastError();
-
-    /********************************************************************************************************/
-    // Write operations (writing must use the same mode)
-    
-    // Set offset values
-    void SetOffset(double xOffset, double yOffset, double zOffset);
-
-    // Set precision (specify the number of decimal places to retain)
-    void SetPrecision(double xPrecision, double yPrecision, double zPrecision);
-
-    // Write point cloud (append to the file from the last written position)
-    bool WriteLas(LasPoint* pLasPoint, int nPoint);
-    bool WriteLas(LasPointClass* pLasPoint, int nPoint);
-    bool WriteLas(LasPointFull* pLasPoint, int nPoint);
-    bool WriteLas(LasPointEcho* pLasPoint, int nPoint);
-    bool WriteLas(LasPointTime* pLasPoint, int nPoint);
-    bool WriteLas(LasPointUltra* pLasPoint, int nPoint);
-    
-    // Write only the point cloud coordinates (append to the file from the last written position)
-    bool WriteLas(DPT3D* pLasPoint, int nPoint);
-
-    // Write point cloud (insert at a specified position)
-    bool WriteLas(int nStartIndex, LasPoint* pLasPoint, int nListSize);
-    bool WriteLas(int nStartIndex, LasPointClass* pLasPoint, int nListSize);
-    bool WriteLas(int nStartIndex, LasPointFull* pLasPoint, int nListSize);
-    bool WriteLas(int nStartIndex, LasPointEcho* pLasPoint, int nListSize);
-    bool WriteLas(int nStartIndex, LasPointTime* pLasPoint, int nListSize);
-    bool WriteLas(int nStartIndex, LasPointUltra* pLasPoint, int nListSize);
-
-    // Write only the point cloud coordinates (insert at a specified position)
-    bool WriteLas(int nStartIndex, DPT3D* pLasPoint, int nListSize);
-
-    // Read operations
-    
-    // Get the number of points
-    int GetPtNum();
-
-    // Get the range
-    void GetRange(double& xmin, double& xmax, double& ymin, double& ymax, double& zmin, double& zmax);
-
-    // Get offset values
-    void GetOffset(double& xOffset, double& yOffset, double& zOffset);
-
-    // Get precision (number of decimal places retained for points)
-    void GetPrecision(double& xPrecision, double& yPrecision, double& zPrecision);
-
-    // Read point cloud (read from the last read position)
-    bool ReadLas(LasPoint* pLasPoint, int nListSize);
-    bool ReadLas(LasPointClass* pLasPoint, int nListSize);
-    bool ReadLas(LasPointFull* pLasPoint, int nListSize);
-    bool ReadLas(LasPointEcho* pLasPoint, int nListSize);
-    bool ReadLas(LasPointTime* pLasPoint, int nListSize);
-    bool ReadLas(LasPointUltra* pLasPoint, int nListSize);
-
-    // Read only the point cloud coordinates (read from the last read position)
-    bool ReadLas(DPT3D* pLasPoint, int nListSize);
-
-    // Read point cloud (read from a specified position)
-    bool ReadLas(int nStartIndex, LasPoint* pLasPoint, int nListSize);
-    bool ReadLas(int nStartIndex, LasPointClass* pLasPoint, int nListSize);
-    bool ReadLas(int nStartIndex, LasPointFull* pLasPoint, int nListSize);
-    bool ReadLas(int nStartIndex, LasPointEcho* pLasPoint, int nListSize);
-    bool ReadLas(int nStartIndex, LasPointTime* pLasPoint, int nListSize);
-    bool ReadLas(int nStartIndex, LasPointUltra* pLasPoint, int nListSize);
-
-    // Read only the point cloud coordinates (read from a specified position)
-    bool ReadLas(int nStartIndex, DPT3D* pLasPoint, int nListSize);
-
-    /********************************************************************************************************/
+	// 读文件的操作
+	// 获得点的个数
+	int64_t						GetPtNum();
+	// 获得范围
+	void						GetRange(double & xmin, double & xmax, double & ymin, double & ymax, double & zmin, double & zmax);
+	// 获得偏移量
+	void						GetOffset(double & xOffset, double & yOffset, double & zOffset);
+	// 获得精度,即点最后的保存到小数点后几位
+	void						GetPrecision(double & xPrecision, double & yPrecision, double & zPrecision);
+	// 读点云(从上次的地方开始读取)
+	bool						ReadLas(LasPoint * pLasPoint, int nListSize);
+	// 读点云(从上次的地方开始读取)
+	bool						ReadLas(LasPointClass * pLasPoint, int nListSize);
+	// 读点云(从上次的地方开始读取)
+	bool						ReadLas(LasPointFull * pLasPoint, int nListSize);
+	// 读点云(从上次的地方开始读取)
+	bool						ReadLas(LasPointEcho * pLasPoint, int nListSize);
+	// 只读取点云的坐标(从上次的地方开始读取)
+	bool						ReadLas(DPT3D * pLasPoint, int64_t nListSize);
+	// 读点云(中间读取)
+	bool						ReadLas(int nStartIndex, LasPoint * pLasPoint, int nListSize);
+	// 读点云(中间读取)
+	bool						ReadLas(int nStartIndex, LasPointClass * pLasPoint, int nListSize);
+	// 读点云(中间读取)
+	bool						ReadLas(int nStartIndex, LasPointFull * pLasPoint, int nListSize);
+	// 读点云(中间读取)
+	bool						ReadLas(int nStartIndex, LasPointEcho * pLasPoint, int nListSize);
+	// 只读取点云的坐标(中间读取)
+	bool						ReadLas(int nStartIndex, DPT3D * pLasPoint, int nListSize);
+/********************************************************************************************************/
 
 protected:
-    // Error message
-    char m_szErrorMsg[512];
-
-    // File path
-    char m_szLasPath[512];
-
-    // GPS Time Type
-    unsigned char m_GPSType;
-
-    // Offset values
-    double m_xOffset;
-    double m_yOffset;
-    double m_zOffset;
-
-    // Scaling factors (used for precision when writing)
-    double m_xScalefactor;
-    double m_yScalefactor;
-    double m_zScalefactor;
-
-    // File mode flag
-    OPENFLAGS m_flag;
-
-    // File pointer
-    FILE* m_pfpFile;
-
-    // LAS mode
-    void* m_pLasMode;
-
-    // Additional fields for writing
-    void* m_pHeader;
-    bool m_bOpenMode;
-
-    // Point cloud range
-    double m_xMax;
-    double m_xMin;
-    double m_yMax;
-    double m_yMin;
-    double m_zMax;
-    double m_zMin;
-
-    // Number of points
-    int m_nPoint;
+	// 错误信息
+	char						m_szErrorMsg[512];
+	// 文件的路径
+	char						m_szLasPath[512];
+	// 偏移量
+	double						m_xOffset;
+	double						m_yOffset;
+	double						m_zOffset;
+	// 缩放系数,写的时候根据精度来
+	double						m_xScalefactor;
+	double						m_yScalefactor;
+	double						m_zScalefactor;
+	// 文件标志
+	OPENFLAGS					m_flag;
+	//FILE *					m_pfpFile;
+	// use LASTools API
+	void * 						m_pOpener;
+	void *						m_pLasMode;
+	// add for the write(only)
+	void * 						m_pHeader;
+	bool						m_bOpenMode;
+	// 点的范围
+	double						m_xMax;
+	double						m_xMin;
+	double						m_yMax;
+	double						m_yMin;
+	double						m_zMax;
+	double						m_zMin;
+	// 点的个数
+	int64_t						m_nPoint;
+	// add for the LAZ write
+	bool						m_bCompress;
 
 protected:
-    // Reset the internal state
-    void Reset();
-
-    // Write LAS header
-    bool WriteLasHeader(bool bColor = true, bool bGPS = false);
-
-    // Read LAS header
-    void ReadLasHeader();
-
-    // Transform coordinates using offset and scaling factors (global to local coordinate system)
-    void Global2LocalCoord(double gx, double gy, double gz, int& x, int& y, int& z);
-
-    // Transform coordinates using offset and scaling factors (local to global coordinate system)
-    void Local2GlobalCoord(int x, int y, int z, double& gx, double& gy, double& gz);
-
-    // Update boundary values
-    void UpdateRange();
+	void						Reset();
+	// 写Las的头文件
+	bool						WriteLasHeader(bool bColor = true);
+	// 读Las的头文件
+	void						ReadLasHeader();
+	// 根据坐标和缩放系数进行变换(全局坐标系到局部坐标系)
+	void						Global2LocalCoord(double gx, double gy, double gz, int & x, int & y, int & z);
+	// 根据坐标和缩放系数进行变换(局部坐标系到全局坐标系)
+	void						Local2GlobalCoord(int x, int y, int z, double & gx, double & gy, double & gz);
+	// 更新边界
+	void						UpdateRange();
+	// add for LAS 1.4 if the
+	void						UpdateHeader();
 };
 #endif // WULASLIB_H__WHU_WUTENG_2014_05_16_14_40_03

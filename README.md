@@ -43,6 +43,12 @@ There are some files need to be removed in Linux :
 
 Some code need to be added in "laswriter_las.hpp" and "laswriter_las.cpp".
 
+### v4.0 based on lastool(v2026)
+
+This version can read and write **compress/uncompress** LAS/LAZ file, for the write, if the extension is "laz/LAZ", then the file is compress.
+
+**I found that new version LASTool can read very large file, the old one can't.**
+
 
 ## Example
 
