@@ -47,7 +47,15 @@ Some code need to be added in "laswriter_las.hpp" and "laswriter_las.cpp".
 
 This version can read and write **compress/uncompress** LAS/LAZ file, for the write, if the extension is "laz/LAZ", then the file is compress.
 
-**I found that new version LASTool can read very large file, the old one can't.**
+There are some files need to be removed in Linux :
+
+```
+./rmfile.sh
+```
+
+Some code need to be added in "laswriter_las.hpp", "laswriter_las.cpp", "mydefs.hpp","lasunzipper.cpp","laszipper.cpp", etc.
+
+**I found that new version LASTool can read very large file(54GB), the old one can't.**
 
 
 ## Example
