@@ -9,3 +9,4 @@
 rm ./LAStools/LASzip/src/laszip_dll.cpp
 rm ./LAStools/LASlib/src/demzip_dll.cpp
 rm ./LAStools/LASlib/src/demzip_api.c
+rm ./LAStools/LASlib/src/lasvlr.cpp
